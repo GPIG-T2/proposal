@@ -12,6 +12,11 @@ Notes:
   concretely define what the exact type is, and to support annotations used for
   the generation of the JSON schemas.
 
+- Properties suffixed with ? are optional, and are allowed to not appear within
+  the JSON data if not necessary.
+  For the purposes of the interface, implementations should consider these
+  properies as either as missing entirely, or just set to null.
+
 */
 
 //////////////////////// Utility definitions ////////////////////////
@@ -31,13 +36,21 @@ type AreaId = integer;
 type TransportLinkId = integer;
 type PersonId = integer;
 type OrganisationId = integer;
+type RestrictionId = integer;
 
 //////////////////////// Enums ////////////////////////
 
 /**
  * The different kinds of transport between areas.
  */
-type TransportKind = "path" | "train" | "car" | "bus";
+type TransportKind =
+  | "path" // Used for walking & cycling.
+  | "train"
+  | "car" // Can include taxis.
+  | "bus"
+  | "subway"
+  | "tram"
+  | "airplane";
 
 /**
  * The different kinds of organisations in an area
@@ -72,6 +85,7 @@ interface InfectionData {
  * 'subareas', which can be used for granularity.
  */
 export interface Area {
+  id: AreaId;
   name: string;
   people: PeopleData;
   infection: InfectionData;
@@ -147,9 +161,17 @@ export interface Organisation {
 
 /**
  * Restrictions will dictate how the different areas are locked down.
+ *
+ * The arrays contain the parts of the simulation space that the restrictions
+ * apply to. Overlapping parts should be resolved to the highest restriction
+ * within the Virus model (for consistency in behaviour).
  */
 export interface Restriction {
+  id: RestrictionId;
   kind: RestrictionKind;
   strictness: RestrictionStrictness;
-  ids: OrganisationId | TransportLinkId | AreaId;
+
+  areas: AreaId[];
+  organisations: OrganisationId[];
+  transportLinks: TransportLinkId[];
 }
