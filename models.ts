@@ -10,6 +10,9 @@ type TransportKind = 'path' | 'train' | 'car' | 'bus';
 // The different kinds of organisations in an area
 type OrganisationKind = 'school' | 'hospitality' | 'business' | 'medical'
 
+type RestrictionKind = 'travel' | 'organisation' | 'lockdown'
+type RestrictionStrictness = 'none' | 'mild' | 'severe'
+
 // Holds the data for people in the area, including how many there are in total, the amount infected and a list of ids which relate to the people
 interface PeopleData {
   total: number;
@@ -29,6 +32,7 @@ interface Area {
   infection: InfectionData;
   subArea: AreaId[];
   organisations: OrganisationId[];
+  restrictionLevel: RestrictionStrictness;
 }
 
 // The links between areas which includes the method of transport, the time it takes to travel, the infection rates and the people who are travelling
@@ -39,6 +43,7 @@ interface TransportLink {
   link: [number, number];
   travelTime: number;
   infection: InfectionData;
+  restrictionLevel: RestrictionStrictness;
 }
 
 // Used for the graphical representation of the areas, abstracted in a way which means grid based approaches and node based approaches work
@@ -72,4 +77,12 @@ interface Organisation {
   kind: OrganisationKind;
   people: PeopleData;
   infection: InfectionData;
+  restrictionLevel: RestrictionStrictness;
+}
+
+// Restrictions will dictate how the different areas are locked down 
+interface Restriction {
+  kind: RestrictionKind
+  strictness: RestrictionStrictness
+  ids: OrganisationId | TransportLinkId | AreaId
 }
