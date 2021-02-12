@@ -89,6 +89,30 @@ paths:
                 $ref: '#/components/schemas/TransportLink'
         '404':
           description: Unknown transport link
+  /organisation:
+    get:
+      tags:
+        - Requests
+      summary: Request data on an organisation by id
+      operationId: requestOrganisation
+      description: |
+        Requests data on a specific organisation by id
+      parameters:
+        - in: query
+          name: id
+          description: |
+            The organisation id
+          schema:
+            $ref: '#/components/schemas/OrganisationId'
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+        '404':
+          description: "Unknown organisation"
   /person:
     get:
       tags:
