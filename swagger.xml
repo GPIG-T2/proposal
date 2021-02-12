@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: GPIG Proposal
+tags:
+  - name: Requests
+    description: Requests for data from the virus
+  - name: Control
+    description: Control commands from the Health Org 
+paths:
+  /area:
+    get:
+      tags:
+        - Requests
+      summary: Request the data for the layout of the map
+      operationId: requestLayout
+      description: |
+        Requests either the layout of the map or the data from an area
+      parameters: 
+        - in: query
+          name: id
+          description: |
+            The id of the area you want to get the information about, 
+            if it is not present then the Layout object is returned.
+          required: false
+          schema:
+            $ref: '#/components/schemas/AreaId'
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Layout'
+                  - $ref: '#/components/schemas/Area'
+        '404':
+          description: Unknown area
+  /area/transport:
+    get:
+      tags:
+        - Requests
+      summary: List transportation methods
+      operationId: requestTransportList
+      description: |
+        Requests data on the methods of transport to/from an area
+      parameters:
+        - in: query
+          name: id
+          description: |
+            The id of the area in question
+          required: true
+          schema:
+            $ref: '#/components/schemas/AreaId'
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransportLink'
+        '404':
+          description: Unknown area
+  /transport:
+    get:
+      tags:
+        - Requests
+      summary: |
+        Request data on a transport link
+      operationId: requestTransportId
+      description: |
+        Request a transport link object from it's id
+      parameters:
+        - in: query
+          name: id
+          description: |
+            The id of the transport link
+          required: true
+          schema:
+            $ref: '#/components/schemas/TransportLinkId'
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TransportLink'
+        '404':
+          description: Unknown transport link
+  /person:
+    get:
+      tags:
+        - Requests
+      summary: Request data on a person by id
+      operationId: requestPerson
+      description: |
+        Requests data on a specific person by a given id
+      parameters:
+        - in: query
+          name: id
+          description:
+            The persons id
+          required: true
+          schema:
+            $ref: '#/components/schemas/PersonId'
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '404':
+          description: Unknown person
+  /restriction:
+    post:
+      tags:
+        - Control
+      summary: Put a restriction in place
+      operationId: controlRestriction
+      description: | 
+        Puts restrictions in place on the different types of areas and controls 
+        the severity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Restriction'
+      responses:
+        '200':
+          description: Ok
+        
+                
+components:
+  schemas:
+    Layout:
+      type: object
+      required:
+        - areas
+      properties:
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaLayout'
+    AreaLayout:
+      type: object
+      required: 
+        - id
+        - x
+        - y
+      properties:
+        id:
+          $ref: '#/components/schemas/AreaId'
+        x:
+          type: integer
+        y:
+          type: integer
+    Area:
+      type:  object
+      required:
+        - name
+        - people
+        - infection
+        - organisations
+      properties:
+        name: 
+          type: string
+        subAreas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaId'
+        people:
+          $ref: '#/components/schemas/PeopleData'
+        infection:
+          $ref: '#/components/schemas/InfectionData'
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganisationId'
+    TransportLink:
+      type: object
+      required:
+        - id
+        - kind
+        - people
+        - link
+        - travelTime
+        - infection
+      properties:
+        id:
+          $ref: '#/components/schemas/TransportLinkId'
+        kind:
+          $ref: '#/components/schemas/TransportKind'
+        people:
+          $ref: '#/components/schemas/PeopleData'
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaId'
+          minItems: 2
+          maxItems: 2
+        travelTime:
+          type: number
+        infection:
+          $ref: '#/components/schemas/InfectionData'
+    Organisation:
+      type: object
+      required:
+        - id
+        - kind
+        - people
+        - infection
+      properties:
+        id:
+          $ref: '#/components/schemas/OrganisationId'
+        kind:
+          $ref: '#/components/schemas/OrganisationKind'
+        people:
+          $ref: '#/components/schemas/PeopleData'
+        infection:
+          $ref: '#/components/schemas/InfectionData'
+    PeopleData:
+      type: object
+      required:
+        - total
+        - infected
+        - ids
+      properties:
+        total:
+          type: integer
+        infected:
+          type: integer
+        ids:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonId'
+    Person:
+      type: object
+      required:
+        - id
+        - contacts
+        - infected
+      properties:
+        id:
+          $ref: '#/components/schemas/PersonId'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        infected:
+          type: boolean
+    Contact:
+      type: object
+      required:
+        - person
+        - timestep
+      properties:
+        person:
+          $ref: '#/components/schemas/PersonId'
+        timestep:
+          type:
+            integer
+    InfectionData:
+      type: object
+      required:
+        - rateMultiplier
+      properties:
+        rateMultiplier:
+          type: number
+    Restriction:
+      type: object
+      required:
+        - kind
+        - strictness
+        - ids
+      properties:
+        kind:
+          $ref: '#/components/schemas/RestrictionKind'
+        strictness:
+          $ref: '#/components/schemas/RestrictionStrictness'
+        ids:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/AreaId'
+              - $ref: '#/components/schemas/TransportLinkId'
+              - $ref: '#/components/schemas/OrganisationId'
+    TransportKind:
+      type: string
+      enum:
+        - path
+        - train
+        - car
+        - bus
+    OrganisationKind:
+      type: string
+      enum:
+        - education
+        - hospitality
+        - business
+        - medical
+    RestrictionKind:
+      type: string
+      enum:
+        - organisation
+        - education
+        - area
+    RestrictionStrictness:
+      type: string
+      enum:
+        - none
+        - mild
+        - severe
+    PersonId:
+      type: integer
+    AreaId:
+      type: integer
+    OrganisationId:
+      type: integer
+    TransportLinkId:
+      type: integer
