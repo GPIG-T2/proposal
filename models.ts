@@ -55,7 +55,7 @@ interface Layout {
 
 // Keeps track of who people have been in contact with and when
 interface Contact {
-  people: [PersonId, PersonId];
+  person: PersonId;
   timestep: number;
 }
 
@@ -65,7 +65,7 @@ interface Person {
   contact: Contact[];
 }
 
-// Organasations are places which people attend to regularly and can be restricted and shut down by the WHO etc
+// Organisations are places which people attend to regularly and can be restricted and shut down by the WHO etc
 // Also can potentially add more testing facilities/vaccination centres via the WHO
 interface Organisation {
   id: OrganisationId;
