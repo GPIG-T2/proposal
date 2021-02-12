@@ -1,32 +1,77 @@
-// Type declarations 
-type AreaId = number;
-type TransportLinkId = number;
-type PersonId = number;
-type OrganisationId = number;
+/*
 
-// The different kinds of transport between areas 
-type TransportKind = 'path' | 'train' | 'car' | 'bus';
+This document contains the full type references for all of the JSON structures
+that are used for this interface. They are described using TypeScript, as this
+is a language that strictly types JavaScript, which is the basis for JSON, making
+it very close and almost exactly accurate.
 
-// The different kinds of organisations in an area
-type OrganisationKind = 'school' | 'hospitality' | 'business' | 'medical'
+Notes:
+- In JS, and thus TS, integers and floats are considered the same type 'number'.
+  To keep the validity of this document, we have to define these 2 types in
+  terms of 'number'. To make it more readable, utility types are used to more
+  concretely define what the exact type is, and to support annotations used for
+  the generation of the JSON schemas.
 
-type RestrictionKind = 'travel' | 'organisation' | 'lockdown'
-type RestrictionStrictness = 'none' | 'mild' | 'severe'
+*/
 
-// Holds the data for people in the area, including how many there are in total, the amount infected and a list of ids which relate to the people
+//////////////////////// Utility definitions ////////////////////////
+
+/**
+ * @asType float
+ */
+type float = number;
+/**
+ * @asType integer
+ */
+type integer = number;
+
+//////////////////////// ID Types ////////////////////////
+
+type AreaId = integer;
+type TransportLinkId = integer;
+type PersonId = integer;
+type OrganisationId = integer;
+
+//////////////////////// Enums ////////////////////////
+
+/**
+ * The different kinds of transport between areas.
+ */
+type TransportKind = "path" | "train" | "car" | "bus";
+
+/**
+ * The different kinds of organisations in an area
+ */
+type OrganisationKind = "school" | "hospitality" | "retail" | "medical";
+
+type RestrictionKind = "travel" | "organisation" | "lockdown";
+type RestrictionStrictness = "none" | "mild" | "severe";
+
+//////////////////////// JSON Structures ////////////////////////
+
+/**
+ * Holds the data for people in the area, including how many there are in total,
+ * the amount infected and a list of ids which relate to the people.
+ */
 interface PeopleData {
-  total: number;
-  infected: number;
+  total: integer;
+  infected: integer;
   ids: PersonId[];
 }
 
-// Holds a value for the infection rate of a particular area or transport link. I.E travelling in a train has a higher risk of catching the infection than in a car
+/**
+ * Holds a value for the infection rate of a particular area or transport link.
+ * i.e. travelling in a train has a higher risk of catching the infection than in a car
+ */
 interface InfectionData {
-  rateMultiplier: number;
+  rateMultiplier: float;
 }
 
-// Contains the information about different areas on the map including any "subareas" which can be used for granularity.
-interface Area {
+/**
+ * Contains the information about different areas on the map including any
+ * 'subareas', which can be used for granularity.
+ */
+export interface Area {
   name: string;
   people: PeopleData;
   infection: InfectionData;
@@ -35,44 +80,64 @@ interface Area {
   restrictionLevel: RestrictionStrictness;
 }
 
-// The links between areas which includes the method of transport, the time it takes to travel, the infection rates and the people who are travelling
-interface TransportLink {
+/**
+ * The links between areas which includes the method of transport, the time it
+ * takes to travel, the infection rates and the people who are travelling.
+ */
+export interface TransportLink {
   id: TransportLinkId;
   kind: TransportKind;
   people: PeopleData;
-  link: [number, number];
-  travelTime: number;
+  link: [AreaId, AreaId];
+  travelTime: float;
   infection: InfectionData;
   restrictionLevel: RestrictionStrictness;
 }
 
-// Used for the graphical representation of the areas, abstracted in a way which means grid based approaches and node based approaches work
+/**
+ * Used for the graphical representation of the areas, abstracted in a way which
+ * means grid based approaches and node based approaches work.
+ */
 interface AreaLayout {
-  area: number;
-  x: number;
-  y: number;
+  area: AreaId;
+  x: float;
+  y: float;
 }
 
-// The base structure which contains all the data for the map
-interface Layout {
+/**
+ * The base structure which contains all the data for the map.
+ */
+export interface Layout {
   areas: AreaLayout[];
 }
 
-// Keeps track of who people have been in contact with and when
+/**
+ * Keeps track of who people have been in contact with and when.
+ */
 interface Contact {
   person: PersonId;
-  timestep: number;
+  timestep: integer;
 }
 
-// An individual person with an id and a list of contacts which can be used for contact tracing
-interface Person {
-  id : PersonId;
+/**
+ * An individual person with an id and a list of contacts which can be used for
+ * contact tracing.
+ */
+export interface Person {
+  id: PersonId;
   contact: Contact[];
+  age: integer;
+  sex: integer;
 }
 
-// Organisations are places which people attend to regularly and can be restricted and shut down by the WHO etc
-// Also can potentially add more testing facilities/vaccination centres via the WHO
-interface Organisation {
+/**
+ * Organisations are places which people attend to regularly and can be
+ * restricted and shut down by the WHO etc.
+ *
+ * Also can potentially add more testing facilities/vaccination centres via
+ * the WHO.
+ */
+export interface Organisation {
   id: OrganisationId;
   kind: OrganisationKind;
   people: PeopleData;
@@ -80,9 +145,11 @@ interface Organisation {
   restrictionLevel: RestrictionStrictness;
 }
 
-// Restrictions will dictate how the different areas are locked down 
-interface Restriction {
-  kind: RestrictionKind
-  strictness: RestrictionStrictness
-  ids: OrganisationId | TransportLinkId | AreaId
+/**
+ * Restrictions will dictate how the different areas are locked down.
+ */
+export interface Restriction {
+  kind: RestrictionKind;
+  strictness: RestrictionStrictness;
+  ids: OrganisationId | TransportLinkId | AreaId;
 }
