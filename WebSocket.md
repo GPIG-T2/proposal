@@ -23,22 +23,22 @@ Kind: `get`
 Reference: `area`
 Specifics: none
 
-> Returns: `[Area\[\]](models.ts#L78)`
+> Returns: [`Area[]`](models.ts#L78)
 
 Kind: `get`
 Reference: `area`
-Specifics: `\[area id\]`
+Specifics: `[area id]`
 
-> Returns: `[Area](models.ts#L78)` or error if `area id` is not found
+> Returns: [`Area`](models.ts#L78) or error if `area id` is not found
 
 Kind: `get`
 Reference: `link`
 Specifics: none
 
-> Returns: `[TransportLink\[\]](models.ts#L91)`
+> Returns: [`TransportLink[]`](models.ts#L91)
 
 Kind: `get`
 Reference: `link`
-Specifics: `\[link id\]`
+Specifics: `[link id]`
 
-> Returns: `[TransportLink](models.ts#L91)` or error if `link id` is not found
+> Returns: [`TransportLink`](models.ts#L91) or error if `link id` is not found
