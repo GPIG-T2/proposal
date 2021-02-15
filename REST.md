@@ -55,6 +55,7 @@ This document outlines the REST interface version of this proposal.
 `POST /restrictions`
 
 > Body: [`Restriction`](models.ts#L164) (`id` property is omitted, and ignored on server-side)
+
 > Returns: [`Restriction`](models.ts#L164)
 
 `DELETE /restrictions/:id`
