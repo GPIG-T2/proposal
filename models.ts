@@ -24,11 +24,11 @@ Notes:
 /**
  * @asType float
  */
-type float = number;
+export type float = number;
 /**
  * @asType integer
  */
-type integer = number;
+export type integer = number;
 
 //////////////////////// ID Types ////////////////////////
 
@@ -57,7 +57,6 @@ type TransportKind =
  */
 type OrganisationKind = "school" | "hospitality" | "retail" | "medical";
 
-type RestrictionKind = "travel" | "organisation" | "lockdown";
 type RestrictionStrictness = "none" | "mild" | "severe";
 
 //////////////////////// JSON Structures ////////////////////////
@@ -73,14 +72,6 @@ interface PeopleData {
 }
 
 /**
- * Holds a value for the infection rate of a particular area or transport link.
- * i.e. travelling in a train has a higher risk of catching the infection than in a car
- */
-interface InfectionData {
-  rateMultiplier: float;
-}
-
-/**
  * Contains the information about different areas on the map including any
  * 'subareas', which can be used for granularity.
  */
@@ -88,7 +79,6 @@ export interface Area {
   id: AreaId;
   name: string;
   people: PeopleData;
-  infection: InfectionData;
   subArea: AreaId[];
   organisations: OrganisationId[];
   restrictionLevel: RestrictionStrictness;
@@ -104,7 +94,6 @@ export interface TransportLink {
   people: PeopleData;
   link: [AreaId, AreaId];
   travelTime: float;
-  infection: InfectionData;
   restrictionLevel: RestrictionStrictness;
 }
 
@@ -134,14 +123,21 @@ interface Contact {
 }
 
 /**
- * An individual person with an id and a list of contacts which can be used for
- * contact tracing.
+ * An individual person with an ID and their relevant demographics.
  */
 export interface Person {
   id: PersonId;
-  contact: Contact[];
   age: integer;
-  sex: integer;
+  // Just assume binary biological sex for simplicity in models.
+  sex: 1 | 2;
+}
+
+/**
+ * Conact tracing details for the given person.
+ */
+export interface ContactTrace {
+  for: PersonId;
+  contact: Contact[];
 }
 
 /**
@@ -155,7 +151,6 @@ export interface Organisation {
   id: OrganisationId;
   kind: OrganisationKind;
   people: PeopleData;
-  infection: InfectionData;
   restrictionLevel: RestrictionStrictness;
 }
 
@@ -168,7 +163,6 @@ export interface Organisation {
  */
 export interface Restriction {
   id: RestrictionId;
-  kind: RestrictionKind;
   strictness: RestrictionStrictness;
 
   areas: AreaId[];

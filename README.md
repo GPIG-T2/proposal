@@ -12,7 +12,7 @@ This proposal has 3 main sections:
 2. REST interface
 3. WebSocket interace
 
-The REST and WebSocket interfaces are alternatives for the method of communication the interface will use between both models. The reasoning for including both is explained further on.
+The REST and WebSocket interfaces are _alternatives_ for the method of communication for the interface. Only 1 should be selected for the final interface. Justifications for both are provided to allow weighing each properly.
 
 ### JSON Structures
 
