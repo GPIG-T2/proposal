@@ -8,31 +8,31 @@ import { integer } from "./models";
 interface GetRequest {
   nonce: string;
   kind: "get";
-  reference: string;
-  specifics?: integer[];
+  path: string;
+  ids?: integer[];
 }
 
 interface CreateRequest<T> {
   nonce: string;
   kind: "create";
-  reference: string;
-  specifics?: integer[];
+  path: string;
+  ids?: integer[];
   data: T;
 }
 
 interface UpdateRequest<T> {
   nonce: string;
   kind: "update";
-  reference: string;
-  specifics?: integer[];
+  path: string;
+  ids?: integer[];
   data: T;
 }
 
 interface DeleteRequest {
   nonce: string;
   kind: "delete";
-  reference: string;
-  specifics?: integer[];
+  path: string;
+  ids?: integer[];
 }
 
 /**
@@ -44,6 +44,10 @@ export type Request<T> =
   | UpdateRequest<T>
   | DeleteRequest;
 
+interface ErrorResponse {
+  reason: "invalid" | "not_found";
+}
+
 interface ValidResponse<T> {
   nonce: string;
   error?: undefined | null;
@@ -52,7 +56,7 @@ interface ValidResponse<T> {
 
 interface ErrorResponse {
   nonce: string;
-  error: object;
+  error: ErrorResponse;
   data?: undefined | null;
 }
 

@@ -34,4 +34,41 @@ The WebSockeet interface is outlined within the [WebSocket](WebSocket.md) docume
 
 WebSockets are a web standard, meaning that many popular languages (including Python and Java) provide straightforward libraries for creating both the server and client. As the models require constant data transfer to function correctly, it seems resonable to use a method of communication that stays open, and allows a true back-and-forth of data between both sides. The WebSocket standard is also relatively simple, as it provides a method of transmitting text data, similar to HTTP.
 
-As the Virus model runs on specific time-steps, which are explicitly defined in the parameters in terms of real-world timings, it also seems reasonable to allow a more asyncronous method of communication, in which the Virus model can perform its simulation continuously, and inform the WHO model of each new timestep, without needing to wait for the WHO model to directly interact and fetch this data.
+As the Virus model runs on specific time-steps, which are explicitly defined in the parameters in terms of real-world timings, it also seems reasonable to allow a more asynchonous, bi-directional method of communication. This would allow the Virus to perform its simulation, and then send a message directly to the WHO model to inform of the end of the tick. The WHO model can then immediately start its simulation, sending and receiving messages to gather data and make changes, and once it is done, it can send a message to inform the Virus model it is complete, at which point the Virus can simulate its turn.
+
+One major benefit of using WebSockets instead of a REST interface is that REST can be fairly complicated to work with on the server-side, and frameworks that aim to reduce this complexity are not designed to have a long-running, queryable process in the background that is the source of the data. WebSockets, however, can be relatively simple, as it is purely a bi-directional text channel. This simplicty can be seen in the Python package [`websocket`](https://websockets.readthedocs.io/en/stable/), where a simple echo server and client uses just the following code:
+
+**Client**
+
+```python
+#!/usr/bin/env python
+
+import asyncio
+import websockets
+
+async def hello():
+    uri = "ws://localhost:8765"
+    async with websockets.connect(uri) as websocket:
+        await websocket.send("Hello world!")
+        await websocket.recv()
+
+asyncio.get_event_loop().run_until_complete(hello())
+```
+
+**Server**
+
+```python
+#!/usr/bin/env python
+
+import asyncio
+import websockets
+
+async def echo(websocket, path):
+    async for message in websocket:
+        await websocket.send(message)
+
+start_server = websockets.serve(echo, "localhost", 8765)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
+```
