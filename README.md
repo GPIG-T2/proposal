@@ -12,11 +12,11 @@ This proposal has 3 main sections:
 2. REST interface
 3. WebSocket interace
 
-The REST and WebSocket interfaces are _alternatives_ for the method of communication for the interface. Only 1 should be selected for the final interface. Justifications for both are provided to allow weighing each properly.
+The REST and WebSocket interfaces are _alternatives_ for the method of communication for the interface. Only 1 should be selected for the final interface. Justifications for both are provided.
 
 ### JSON Structures
 
-The primary JSON structures are defined in the [models](models.ts) file. The format of this defintion is TypeScript, as this is a simple, yet accurate, method of describing the JSON structure itself and the types of all the properties contained within each structure. By using TypeScript, we get generate JSON schemas of all of the structures, which can be used for unit testing the interface within each model, ensuring compatability between allow versions.
+The primary JSON structures are defined in the [models](models.ts) file. The format of this defintion is TypeScript, as this is a simple, yet accurate, method of describing the JSON structure itself and the types of all the properties contained within each structure. By using TypeScript, we get generate JSON schemas of all of the structures, which can be used for unit testing the interface within each model, ensuring compatability between all versions.
 
 ### REST Interface
 
@@ -28,7 +28,7 @@ REST interfaces are very common with the prevalence of the web, and as such, mos
 
 ### WebSocket Interface
 
-The WebSockeet interface is outlined within the [WebSocket](WebSocket.md) document. The messages and commands are described in readable terms, such that it can be easlity read and modified as needed. The concrete definitions for the messages are described in the [WebSocket](websocket.ts) definition file, and JSON schemas of these types are also provided to allow for unit testing.
+The WebSockeet interface is outlined within the [WebSocket](WebSocket.md) document. The messages and commands are described in readable terms, such that it can be easily read and modified as needed. The concrete definitions for the messages are described in the [WebSocket](websocket.ts) definition file, and JSON schemas of these types are also provided to allow for unit testing.
 
 #### Justification
 
