@@ -11,7 +11,7 @@ Each message is made of a single base [`Request`](websocket.ts#L41) object. This
 - Update
 - Delete
 
-Each message form is distingushed by the `kind` property. The `path` property is the path string of the data you are attempting to manage, and the `ids` property is used to list the IDs of any specific objects you are attempting to fetch.
+Each message form is distingushed by the `kind` property. The `path` property is the path string of the data you are attempting to manage, and the `ids` property is used to list the IDs of any specific objects you are attempting to fetch. If no IDs are given, then all available objects
 
 Messages are responded to using the [`Response`](websocket.ts#L58) object. This object will have the `data` property set if it succeeded, or the `error` property set if the request failed.
 
@@ -25,7 +25,7 @@ Kind: `get`
 
 Path: `areas`
 
-IDs: none
+IDs: Area IDs
 
 > Data: [`Area[]`](models.ts#L78)
 
@@ -33,31 +33,11 @@ IDs: none
 
 Kind: `get`
 
-Path: `areas`
-
-IDs: `area id`
-
-> Data: [`Area`](models.ts#L78) or error if `area id` is not found
-
----
-
-Kind: `get`
-
 Path: `links`
 
-IDs: none
+IDs: Transport Link IDs
 
 > Returns: [`TransportLink[]`](models.ts#L91)
-
----
-
-Kind: `get`
-
-Path: `links`
-
-IDs: `link id`
-
-> Returns: [`TransportLink`](models.ts#L91) or error if `link id` is not found
 
 ---
 
@@ -75,7 +55,7 @@ Kind: `get`
 
 Path: `people`
 
-IDs: none
+IDs: Person IDs
 
 > Returns: [`Person[]`](models.ts#L128)
 
@@ -83,19 +63,9 @@ IDs: none
 
 Kind: `get`
 
-Path: `people`
-
-IDs: `person id`
-
-> Returns: [`Person`](models.ts#L128) or error if `person id` is not found
-
----
-
-Kind: `get`
-
 Path: `people.contact_trace`
 
-IDs: `person id`
+IDs: Person IDs (requires at least 1)
 
 > Returns: [`ContactTrace[]`](models.ts#L138) or error if `person id` is not found
 
@@ -105,7 +75,7 @@ Kind: `get`
 
 Path: `organisations`
 
-IDs: none
+IDs: Organisation IDs
 
 > Returns: [`Organisation[]`](models.ts#L150)
 
@@ -113,31 +83,11 @@ IDs: none
 
 Kind: `get`
 
-Path: `organisations`
-
-IDs: `org id`
-
-> Returns: [`Organisation`](models.ts#L150) or error if `org id` is not found
-
----
-
-Kind: `get`
-
 Path: `restrictions`
 
-IDs: none
+IDs: Restrictions IDs
 
 > Returns: [`Restriction[]`](models.ts#L164)
-
----
-
-Kind: `get`
-
-Path: `restrictions`
-
-IDs: `restriction id`
-
-> Returns: [`Restriction`](models.ts#L164)
 
 ---
 
@@ -157,7 +107,7 @@ Kind: `update`
 
 Path: `restrictions`
 
-IDs: `restriction id`
+IDs: Restriction ID (only 1 is allowed)
 
 Data: [`Restriction`](models.ts#L164)
 
@@ -169,6 +119,6 @@ Kind: `delete`
 
 Path: `restrictions`
 
-IDs: `restriction id`
+IDs: Restriction IDs (at least 1)
 
 > Returns: [`Restriction`](models.ts#L164) or error if `restriction id` is not found
