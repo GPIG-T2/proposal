@@ -121,4 +121,4 @@ Path: `restrictions`
 
 IDs: Restriction IDs (at least 1)
 
-> Returns: [`Restriction`](models.ts#L164) or error if `restriction id` is not found
+> Returns: [`Restriction[]`](models.ts#L164) or error if `restriction id` is not found
